@@ -34,49 +34,6 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
-// Login page - frontend demonstration only
-
-const loginForm = document.getElementById("loginForm");
-
-if (loginForm) {
-  loginForm.addEventListener("submit", function(event) {
-    event.preventDefault();
-
-    const email = document.getElementById("email").value.trim();
-    const password = document.getElementById("password").value;
-    const message = document.getElementById("loginMessage");
-
-    const selectedRole = document.querySelector(
-      'input[name="role"]:checked'
-    ).value;
-
-    if (!email || !password) {
-      message.textContent = "من فضلك أدخلي البريد الإلكتروني وكلمة المرور.";
-      return;
-    }
-
-    message.textContent =
-      "واجهة تسجيل الدخول جاهزة، لكن يلزم ربط الحسابات بقاعدة بيانات لتسجيل الدخول فعليًا.";
-  });
-}
-
-const signupLink = document.getElementById("signupLink");
-
-if (signupLink) {
-  signupLink.addEventListener("click", function(event) {
-    event.preventDefault();
-    alert("هنجهز صفحة إنشاء الحساب في الخطوة القادمة.");
-  });
-}
-
-const forgotPassword = document.getElementById("forgotPassword");
-
-if (forgotPassword) {
-  forgotPassword.addEventListener("click", function(event) {
-    event.preventDefault();
-    alert("هنضيف استعادة كلمة المرور عند ربط الحسابات.");
-  });
-}
 
 
     /* =================================
