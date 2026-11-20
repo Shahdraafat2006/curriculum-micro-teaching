@@ -353,7 +353,7 @@ if (SUBJ && sb) $('.brand', sb)?.insertAdjacentHTML('afterend', `<a class="subj-
       const c = normDigits(code.value).trim().toLowerCase();
       if (!validCode(c)) { setError(code, CODE_ERR); code.focus(); return; }
       setError(code, '');
-      setUser({ code: c, name: accounts()[c] || c.split('@')[0] }, $('#remember').checked);
+      setUser({ code: c, name: accounts()[c] || 'studentf' }, $('#remember').checked);
       location.href = 'subjects.html';
     });
     code.addEventListener('input', () => setError(code, ''));
@@ -390,6 +390,21 @@ if (SUBJ && sb) $('.brand', sb)?.insertAdjacentHTML('afterend', `<a class="subj-
     `<div class="empty"><div class="ico">${icon(ic)}</div><h3>${esc(title)}</h3><p>${esc(text)}</p>${action}</div>`;
 
   const ratedCount = () => Object.values(ratings()).reduce((n, o) => n + Object.keys(o).length, 0);
+  function renderSubjects() {
+    const u = getUser();
+    const first = u && u.name ? u.name.split(/\s+/)[0] : '';
+    $('#subjHi').textContent = first ? `أهلًا يا ${first}، اختر مادتك` : 'اختر مادتك';
+    const grid = $('#subjGrid');
+    grid.innerHTML = Object.entries(SUBJECTS).map(([id, s]) =>
+      `<button type="button" class="subj-card${id === SUB ? ' current' : ''}" data-subject="${id}"><span class="lvl">${esc(s.level)}</span><b dir="ltr">${esc(s.name)}</b><small>${esc(s.desc)}</small><span class="go">ادخل الركن ${icon('arrow')}</span></button>`).join('');
+    grid.addEventListener('click', (e) => {
+      const b = e.target.closest('[data-subject]');
+      if (b) { setSubject(b.dataset.subject); location.href = 'home.html'; }
+    });
+    const out = $('#subjOut');
+    out.textContent = u ? 'تسجيل الخروج' : 'تسجيل الدخول';
+    out.addEventListener('click', () => { if (u) clearUser(); location.href = 'index.html'; });
+  }
 
   function renderHome() {
     const u = getUser();
@@ -486,6 +501,8 @@ if (SUBJ && sb) $('.brand', sb)?.insertAdjacentHTML('afterend', `<a class="subj-
         </article>`).join('')}</div>`
       : emptyState('clipboard', 'لا توجد اختبارات حاليًا', 'ستظهر هنا الاختبارات عند إضافتها.');
   }
+  
+  projects: renderProjects, quizzes: renderQuizzes, ratings: renderRatings, profile: renderProfile, subjects: renderSubjects,
 
   /* ----- projects & ratings ----- */
   const avgOf = (id) => {
