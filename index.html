@@ -22,36 +22,34 @@
       <div class="bow" data-art="bow" aria-hidden="true"></div>
       <div class="brand"><div class="brand-art" data-art="cap" aria-hidden="true"></div><div class="brand-name">Dr Naglaa Platform <span class="heart" aria-hidden="true">♡</span></div><div class="brand-sub">تعلّم · تواصل · انطلق</div></div>
       <h1>أهلًا بك ♡</h1>
-      <p class="sub">سجّل الدخول لمتابعة المزيد عن المواد</p>
+      <p class="sub">سجل الدخول بكود الطالب الخاص بك لمتابعة المزيد عن الماده المختاره</p>
       <div class="g-wrap" id="gBtn"></div>
       <div class="or-line hidden" id="orLine">أو بالبريد الإلكتروني</div>
       <form id="loginForm" novalidate>
         <div class="field">
-          <label for="code">البريد الإلكتروني (Gmail)</label>
-          <input id="code" name="email" type="email" dir="ltr" inputmode="email" autocomplete="email" autocapitalize="off" spellcheck="false" placeholder="name@gmail.com" required aria-describedby="code-err">
+          <label for="code">كود الطالب (ID)</label>
+          <input id="code" name="student_id" type="number" dir="ltr" inputmode="numeric" autocomplete="username" autocapitalize="off" spellcheck="false" maxlength="9" placeholder="الكود المكون من 9 ارقام" required aria-describedby="code-err">
           <div class="error" id="code-err" aria-live="polite"></div>
         </div>
         <label class="check"><input type="checkbox" id="remember" checked> تذكرني</label>
         <button class="btn block" type="submit">تسجيل الدخول</button>
       </form>
-      <p class="login-links">ليس لديك حساب؟ <a href="#" id="openSignup">إنشاء حساب جديد</a></p>
-      <p class="login-links"><a href="home.html">العودة إلى الصفحة الرئيسية</a></p>
       <p class="login-note">Dr Naglaa Platform · Powered by Eslam El Shennawy &amp; Shahd Raafat</p>
     </div>
   </main>
   <aside class="login-aside" aria-label="عن المنصة">
     <h2>منصة ا.د نجلاء خفاجي</h2>
     <p>كل ما تحتاجه لمتابعة المقررات الخاصة بالدكتورة نجلاء .</p>
-    <ul class="feature-list"><li><span class="ico"><svg class="icon" aria-hidden="true"><use href="#i-book"/></svg></span>المحاضرات والملفات في مكان واحد</li><li><span class="ico"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg></span>تابع التكليفات ومواعيد التسليم</li><li><span class="ico"><svg class="icon" aria-hidden="true"><use href="#i-folder"/></svg></span>شارك مشروعك وقيّم مشاريع زملائك</li><li><span class="ico"><svg class="icon" aria-hidden="true"><use href="#i-clipboard"/></svg></span>اختبارات إلكترونية لمراجعة المحاضرات</li></ul>
+    <ul class="feature-list"><li><span class="ico"><svg class="icon" aria-hidden="true"><use href="#i-book"/></svg></span>المحاضرات</li><li><span class="ico"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg></span>تابع التكليفات ومواعيد التسليم</li><li><span class="ico"><svg class="icon" aria-hidden="true"><use href="#i-folder"/></svg></span>شارك مشروعك وقيّم مشاريع زملائك</li><li><span class="ico"><svg class="icon" aria-hidden="true"><use href="#i-clipboard"/></svg></span>اختبارات إلكترونية لمراجعة المحاضرات</li></ul>
   </aside>
 </div>
 <dialog id="signupDialog" aria-labelledby="signupTitle">
   <form id="signupForm" class="dialog-body" novalidate>
     <h2 id="signupTitle">إنشاء حساب جديد</h2>
-    <div class="field"><label for="s-name">الاسم</label>
-      <input id="s-name" autocomplete="name" maxlength="60" aria-describedby="s-name-err"><div class="error" id="s-name-err" aria-live="polite"></div></div>
+    <div class="field"><label for="s-code">كود الطالب (ID)</label>
+      <input id="s-code" autocomplete="name" maxlength="60" aria-describedby="s-name-err"><div class="error" id="s-name-err" aria-live="polite"></div></div>
     <div class="field"><label for="s-code">البريد الإلكتروني (Gmail)</label>
-      <input id="s-code" type="email" dir="ltr" inputmode="email" placeholder="name@gmail.com" autocomplete="email" autocapitalize="off" spellcheck="false" aria-describedby="s-code-err"><div class="error" id="s-code-err" aria-live="polite"></div></div>
+      <input id="s-code" type="number" dir="ltr" inputmode="numeric" placeholder="مثال:123456789" autocomplete="username" autocapitalize="off" spellcheck="false" maxlength="9" aria-describedby="s-code-err"><div class="error" id="s-code-err" aria-live="polite"></div></div>
     <div class="dialog-actions"><button class="btn" type="submit">إنشاء الحساب</button><button class="btn ghost" type="button" id="closeSignup">إلغاء</button></div>
   </form>
 </dialog>

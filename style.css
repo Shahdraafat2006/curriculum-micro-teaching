@@ -722,3 +722,21 @@ dialog { background: var(--surface-solid); border: 3px solid var(--line); border
 /* Fallback for browsers without <dialog>.showModal() (older iOS / in-app browsers) */
 dialog.dlg-fallback { display: none; }
 dialog.dlg-fallback[open] { display: block; position: fixed; inset: 0; margin: auto; height: fit-content; max-height: calc(100dvh - 24px); z-index: 1000; box-shadow: 0 0 0 100vmax rgba(11, 7, 32, 0.55), 0 24px 70px rgba(11, 7, 32, 0.4); }
+/* ---- Subjects: picker page, sidebar chip, page tag ---- */
+.subjects-page { min-height: 100dvh; display: grid; place-items: center; padding: 24px 16px; }
+.subj-main { width: min(720px, 100%); text-align: center; }
+.subj-main .brand { display: grid; justify-items: center; gap: 4px; margin-bottom: 14px; }
+.subj-main .sub { color: var(--ink-2); margin: 0 0 18px; }
+.subj-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; text-align: start; }
+.subj-card { font: inherit; color: var(--ink); cursor: pointer; display: flex; flex-direction: column; align-items: flex-start; gap: 8px; padding: 20px; border-radius: 24px; border: 2px solid var(--line); background: var(--surface-solid); box-shadow: var(--shadow-sm); transition: transform .15s, border-color .15s; }
+.subj-card:hover, .subj-card:focus-visible, .subj-card.current { transform: translateY(-3px); border-color: var(--accent); }
+.subj-card .lvl { font-size: .8rem; font-weight: 700; padding: 3px 12px; border-radius: 999px; background: var(--accent); color: var(--accent-ink); }
+.subj-card b { font-family: var(--font-display); font-size: 1.15rem; line-height: 1.4; }
+.subj-card small { color: var(--ink-2); font-size: .9rem; }
+.subj-card .go { margin-top: 6px; display: inline-flex; align-items: center; gap: 6px; font-weight: 700; color: var(--accent-text); }
+.subj-chip { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin: 8px 0 12px; padding: 10px 14px; border-radius: 16px; background: var(--surface-solid); border: 1px solid var(--line); color: var(--ink); text-decoration: none; }
+.subj-chip small { display: block; color: var(--ink-2); font-size: .75rem; }
+.subj-chip b { font-size: .85rem; line-height: 1.3; }
+.subj-chip em { font-style: normal; font-size: .8rem; font-weight: 700; color: var(--accent-text); }
+.subj-tag { display: inline-block; margin-bottom: 8px; padding: 3px 12px; border-radius: 999px; background: var(--accent-soft); color: var(--accent-text); font-size: .8rem; font-weight: 700; text-decoration: none; }
+@media (max-width: 640px) { .subj-grid { grid-template-columns: minmax(0, 1fr); } }

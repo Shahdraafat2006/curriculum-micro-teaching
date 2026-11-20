@@ -14,7 +14,7 @@
     GOOGLE_CLIENT_ID: '',
   };
 
-  const LECTURES = [
+  const L_CUR = [
     { id: 'l1', type: 'pdf', title: 'المحاضرة الأولى', desc: 'مقدمة عن موضوع المحاضرة ومحتواها الدراسي.', label: 'ملف PDF', url: '', sample: true },
     { id: 'l2', type: 'ppt', title: 'المحاضرة الثانية', desc: 'العرض التقديمي الخاص بالمحاضرة الثانية.', label: 'ملف PowerPoint', url: '', sample: true },
     { id: 'l3', type: 'video', title: 'شرح المحاضرة', desc: 'فيديو توضيحي للمحتوى الدراسي.', label: 'فيديو', url: '', sample: true },
@@ -25,12 +25,12 @@
     video: { cls: 't-vid', icon: 'play' },
   };
 
-  const ASSIGNMENTS = [
+  const A_CUR = [
     { id: 'a1', title: 'التكليف الأول', desc: 'وصف التكليف ومتطلبات التسليم.', status: 'progress', due: '' },
     { id: 'a2', title: 'التكليف الثاني', desc: 'تفاصيل المهمة والملفات المطلوبة.', status: 'open', due: '' },
   ];
 
-  const QUIZZES = [
+  const Q_CUR = [
     { id: 'q1', title: 'اختبار المحاضرة الأولى', desc: 'اختبار قصير لمراجعة محتوى المحاضرة الأولى.', duration: '', url: '' },
   ];
 
@@ -47,6 +47,23 @@
     'linear-gradient(135deg,#0b0720,#6a2fc8)',
     'linear-gradient(135deg,#6a2fc8,#d1b8ff)',
   ];
+  /* ---- Subjects: each one has its own corner (lectures, assignments, quizzes, projects, ratings) ---- */
+  const SUBJECTS = {
+    curriculum: { name: 'Curriculum and their organization', level: 'المستوى الأول', desc: 'محاضرات وتكليفات واختبارات ومشاريع وتقييمات مادة المستوى الأول.' },
+    micro: { name: 'Micro Teaching', level: 'المستوى الثاني', desc: 'محاضرات وتكليفات واختبارات ومشاريع وتقييمات مادة المستوى الثاني.' },
+  };
+  // Edit each subject's content here (titles, descriptions, links). Add as many items as you want.
+  const CONTENT = {
+    curriculum: { lectures: L_CUR, assignments: A_CUR, quizzes: Q_CUR },
+    micro: {
+      lectures: [
+        { id: 'm-l1', type: 'pdf', title: 'Micro Teaching: المحاضرة الأولى', desc: 'مقدمة عن مادة Micro Teaching ومحتواها.', label: 'ملف PDF', url: '', sample: true },
+        { id: 'm-l2', type: 'video', title: 'شرح المحاضرة الأولى', desc: 'فيديو توضيحي للمحتوى الدراسي.', label: 'فيديو', url: '', sample: true },
+      ],
+      assignments: [{ id: 'm-a1', title: 'تكليف Micro Teaching الأول', desc: 'تحضير درس مصغّر وتسجيله.', status: 'open', due: '' }],
+      quizzes: [{ id: 'm-q1', title: 'اختبار Micro Teaching الأول', desc: 'اختبار قصير لمراجعة المحاضرة الأولى.', duration: '', url: '' }],
+    },
+  };
 
   /* ------------------------------------------------------------------ */
   /* Helpers                                                             */
@@ -93,6 +110,11 @@
   };
   const saveUser = (u) => store.set(store.get(LS, 'dn_user') ? LS : SS, 'dn_user', u);
   const clearUser = () => { store.del(LS, 'dn_user'); store.del(SS, 'dn_user'); };
+  const subjectId = () => { const s = store.get(LS, 'dn_subject') || store.get(SS, 'dn_subject'); return SUBJECTS[s] ? s : ''; };
+  const setSubject = (id) => store.set(LS, 'dn_subject', id);
+  const SUB = subjectId();
+  const SUBJ = SUBJECTS[SUB];
+  const { lectures: LECTURES, assignments: ASSIGNMENTS, quizzes: QUIZZES } = CONTENT[SUB] || CONTENT.curriculum;
   const accounts = () => store.get(LS, 'dn_accounts', {});
   const photos = () => store.get(LS, 'dn_photos', {});
   const photoOf = (code) => photos()[code] || '';
@@ -135,8 +157,8 @@
       fr.readAsDataURL(file);
     });
   }
-  const projects = () => store.get(LS, 'dn_projects', []);
-  const ratings = () => store.get(LS, 'dn_ratings', {});
+  const projects = () => store.get(LS, 'dn_projects:' + SUB, []);
+  const ratings = () => store.get(LS, 'dn_ratings:' + SUB, {});
   const me = () => (getUser() || {}).code || 'guest';
 
   function toast(msg) {
@@ -152,9 +174,9 @@
     clearTimeout(t._h);
     t._h = setTimeout(() => t.classList.remove('show'), 2600);
   }
-
-  const validCode = (c) => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(c) && c.length <= 80;
-  const CODE_ERR = 'اكتب بريدًا إلكترونيًا صحيحًا مثل name@gmail.com';
+// Student ID: digits only, 4 to 14 digits. Change the numbers here to match your real ID format.
+  const validCode = (c) => /^[0-9]{4,14}$/.test(c);
+  const CODE_ERR = 'اكتب رقم الطالب (أرقام فقط).';
 
   function setError(input, msg) {
     const err = $('#' + input.id + '-err');
@@ -271,7 +293,8 @@
 
     const u = getUser();
     paintUser(u && u.name, u && u.code);
-
+if (SUBJ && sb) $('.brand', sb)?.insertAdjacentHTML('afterend', `<a class="subj-chip" href="subjects.html" title="تغيير المادة"><span><small>${esc(SUBJ.level)}</small><b dir="ltr">${esc(SUBJ.name)}</b></span><em>تغيير</em></a>`);
+    if (SUBJ) $('.page-head')?.insertAdjacentHTML('afterbegin', `<a class="subj-tag" href="subjects.html" dir="ltr">${esc(SUBJ.name)}</a>`);
     $('#themeBtn')?.addEventListener('click', () => {
       const root = document.documentElement;
       const dark = root.dataset.theme === 'dark' || (!root.dataset.theme && window.matchMedia('(prefers-color-scheme: dark)').matches);
@@ -313,7 +336,7 @@
             acc[email] = name; store.set(LS, 'dn_accounts', acc);
             if (!photoOf(email) && safePhoto(p.picture)) setPhoto(email, p.picture);
             setUser({ code: email, name }, $('#remember') ? $('#remember').checked : true);
-            location.href = 'home.html';
+            location.href = 'subjects.html';
           } catch { toast('تعذّر تسجيل الدخول بحساب Google، حاول مرة أخرى.'); }
         },
       });
@@ -331,7 +354,7 @@
       if (!validCode(c)) { setError(code, CODE_ERR); code.focus(); return; }
       setError(code, '');
       setUser({ code: c, name: accounts()[c] || c.split('@')[0] }, $('#remember').checked);
-      location.href = 'home.html';
+      location.href = 'subjects.html';
     });
     code.addEventListener('input', () => setError(code, ''));
 
@@ -356,7 +379,7 @@
       if (bad) { (sName.getAttribute('aria-invalid') === 'true' ? sName : sCode).focus(); return; }
       const acc = accounts(); acc[c] = n; store.set(LS, 'dn_accounts', acc);
       setUser({ code: c, name: n }, true);
-      location.href = 'home.html';
+      location.href = 'subjects.html';
     });
   }
 
