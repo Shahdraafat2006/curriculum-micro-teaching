@@ -47,6 +47,10 @@
     'linear-gradient(135deg,#0b0720,#6a2fc8)',
     'linear-gradient(135deg,#6a2fc8,#d1b8ff)',
   ];
+
+  /* ------------------------------------------------------------------ */
+  /* Helpers                                                             */
+  /* ------------------------------------------------------------------ */
   /* ---- Subjects: each one has its own corner (lectures, assignments, quizzes, projects, ratings) ---- */
   const SUBJECTS = {
     curriculum: { name: 'Curriculum and their organization', level: 'المستوى الأول', desc: 'محاضرات وتكليفات واختبارات ومشاريع وتقييمات مادة المستوى الأول.' },
@@ -65,9 +69,6 @@
     },
   };
 
-  /* ------------------------------------------------------------------ */
-  /* Helpers                                                             */
-  /* ------------------------------------------------------------------ */
   const $ = (s, r = document) => r.querySelector(s);
   const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   const icon = (n) => `<svg class="icon" aria-hidden="true"><use href="#i-${n}"/></svg>`;
@@ -174,7 +175,8 @@
     clearTimeout(t._h);
     t._h = setTimeout(() => t.classList.remove('show'), 2600);
   }
-// Student ID: digits only, 4 to 14 digits. Change the numbers here to match your real ID format.
+
+  // Student ID: digits only, 4 to 14 digits. Change the numbers here to match your real ID format.
   const validCode = (c) => /^[0-9]{4,14}$/.test(c);
   const CODE_ERR = 'اكتب رقم الطالب (أرقام فقط).';
 
@@ -293,8 +295,9 @@
 
     const u = getUser();
     paintUser(u && u.name, u && u.code);
-if (SUBJ && sb) $('.brand', sb)?.insertAdjacentHTML('afterend', `<a class="subj-chip" href="subjects.html" title="تغيير المادة"><span><small>${esc(SUBJ.level)}</small><b dir="ltr">${esc(SUBJ.name)}</b></span><em>تغيير</em></a>`);
+    if (SUBJ && sb) $('.brand', sb)?.insertAdjacentHTML('afterend', `<a class="subj-chip" href="subjects.html" title="تغيير المادة"><span><small>${esc(SUBJ.level)}</small><b dir="ltr">${esc(SUBJ.name)}</b></span><em>تغيير</em></a>`);
     if (SUBJ) $('.page-head')?.insertAdjacentHTML('afterbegin', `<a class="subj-tag" href="subjects.html" dir="ltr">${esc(SUBJ.name)}</a>`);
+
     $('#themeBtn')?.addEventListener('click', () => {
       const root = document.documentElement;
       const dark = root.dataset.theme === 'dark' || (!root.dataset.theme && window.matchMedia('(prefers-color-scheme: dark)').matches);
@@ -353,7 +356,7 @@ if (SUBJ && sb) $('.brand', sb)?.insertAdjacentHTML('afterend', `<a class="subj-
       const c = normDigits(code.value).trim().toLowerCase();
       if (!validCode(c)) { setError(code, CODE_ERR); code.focus(); return; }
       setError(code, '');
-      setUser({ code: c, name: accounts()[c] || 'studentf' }, $('#remember').checked);
+      setUser({ code: c, name: accounts()[c] || 'طالب' }, $('#remember').checked);
       location.href = 'subjects.html';
     });
     code.addEventListener('input', () => setError(code, ''));
@@ -390,25 +393,11 @@ if (SUBJ && sb) $('.brand', sb)?.insertAdjacentHTML('afterend', `<a class="subj-
     `<div class="empty"><div class="ico">${icon(ic)}</div><h3>${esc(title)}</h3><p>${esc(text)}</p>${action}</div>`;
 
   const ratedCount = () => Object.values(ratings()).reduce((n, o) => n + Object.keys(o).length, 0);
-  function renderSubjects() {
-    const u = getUser();
-    const first = u && u.name ? u.name.split(/\s+/)[0] : '';
-    $('#subjHi').textContent = first ? `أهلًا يا ${first}، اختر مادتك` : 'اختر مادتك';
-    const grid = $('#subjGrid');
-    grid.innerHTML = Object.entries(SUBJECTS).map(([id, s]) =>
-      `<button type="button" class="subj-card${id === SUB ? ' current' : ''}" data-subject="${id}"><span class="lvl">${esc(s.level)}</span><b dir="ltr">${esc(s.name)}</b><small>${esc(s.desc)}</small><span class="go">ادخل الركن ${icon('arrow')}</span></button>`).join('');
-    grid.addEventListener('click', (e) => {
-      const b = e.target.closest('[data-subject]');
-      if (b) { setSubject(b.dataset.subject); location.href = 'home.html'; }
-    });
-    const out = $('#subjOut');
-    out.textContent = u ? 'تسجيل الخروج' : 'تسجيل الدخول';
-    out.addEventListener('click', () => { if (u) clearUser(); location.href = 'index.html'; });
-  }
 
   function renderHome() {
     const u = getUser();
     const first = u && u.name ? u.name.split(/\s+/)[0] : '';
+    $('#heroTitle').innerHTML = `أهلًا بك في ركن <span dir="ltr">${esc(SUBJ.name)}</span>`;
     $('#heroHi').innerHTML = `${esc(first ? `مرحبًا بعودتك يا ${first}` : 'مرحبًا بك')} <span class="wave" aria-hidden="true">👋</span>`;
 
     const stats = [
@@ -501,8 +490,6 @@ if (SUBJ && sb) $('.brand', sb)?.insertAdjacentHTML('afterend', `<a class="subj-
         </article>`).join('')}</div>`
       : emptyState('clipboard', 'لا توجد اختبارات حاليًا', 'ستظهر هنا الاختبارات عند إضافتها.');
   }
-  
-  projects: renderProjects, quizzes: renderQuizzes, ratings: renderRatings, profile: renderProfile, subjects: renderSubjects,
 
   /* ----- projects & ratings ----- */
   const avgOf = (id) => {
@@ -599,8 +586,8 @@ if (SUBJ && sb) $('.brand', sb)?.insertAdjacentHTML('afterend', `<a class="subj-
         }
         const id = del.closest('[data-id]').dataset.id;
         (projects().find((p) => p.id === id)?.files || []).forEach((f) => fileDel(f.k));
-        store.set(LS, 'dn_projects', projects().filter((p) => p.id !== id));
-        const r = ratings(); delete r[id]; store.set(LS, 'dn_ratings', r);
+        store.set(LS, 'dn_projects:' + SUB, projects().filter((p) => p.id !== id));
+        const r = ratings(); delete r[id]; store.set(LS, 'dn_ratings:' + SUB, r);
         draw(); toast('تم حذف المشروع');
       }
     });
@@ -608,7 +595,7 @@ if (SUBJ && sb) $('.brand', sb)?.insertAdjacentHTML('afterend', `<a class="subj-
       if (!e.target.matches('.stars input')) return;
       const card = e.target.closest('[data-id]'), id = card.dataset.id;
       const r = ratings(); (r[id] = r[id] || {})[me()] = Number(e.target.value);
-      store.set(LS, 'dn_ratings', r);
+      store.set(LS, 'dn_ratings:' + SUB, r);
       $('[data-avg]', card).innerHTML = ratingText(avgOf(id));
       toast('تم حفظ تقييمك');
     });
@@ -639,7 +626,7 @@ if (SUBJ && sb) $('.brand', sb)?.insertAdjacentHTML('afterend', `<a class="subj-
       }
       const list = projects();
       list.push({ id, title, desc, link: link ? safeUrl(link) : '', files: saved, owner: me(), author: u.name || 'طالب', date: new Date().toISOString() });
-      store.set(LS, 'dn_projects', list);
+      store.set(LS, 'dn_projects:' + SUB, list);
       submit.disabled = false;
       dlg.close(); draw(); toast('تم نشر مشروعك');
     });
@@ -679,7 +666,7 @@ if (SUBJ && sb) $('.brand', sb)?.insertAdjacentHTML('afterend', `<a class="subj-
         <p class="role">طالب في المنصة التعليمية ✨</p>
         <button class="link-btn" type="button" id="photoDel" hidden>إزالة الصورة</button>
         <div class="mini-stats">
-          <div class="wide"><b class="sm" dir="ltr">${esc(u.code)}</b><span>البريد الإلكتروني</span></div>
+          <div class="wide"><b class="sm" dir="ltr">${esc(u.code)}</b><span>رقم الطالب (ID)</span></div>
           <div><b>${mineProjects}</b><span>مشاريعي</span></div>
           <div><b>${mineRatings}</b><span>تقييماتي</span></div>
         </div>
@@ -721,17 +708,34 @@ if (SUBJ && sb) $('.brand', sb)?.insertAdjacentHTML('afterend', `<a class="subj-
   }
 
   /* ------------------------------------------------------------------ */
+  function renderSubjects() {
+    const u = getUser();
+    const first = u && u.name ? u.name.split(/\s+/)[0] : '';
+    $('#subjHi').textContent = first ? `أهلًا يا ${first}، اختر مادتك` : 'اختر مادتك';
+    const grid = $('#subjGrid');
+    grid.innerHTML = Object.entries(SUBJECTS).map(([id, s]) =>
+      `<button type="button" class="subj-card${id === SUB ? ' current' : ''}" data-subject="${id}"><span class="lvl">${esc(s.level)}</span><b dir="ltr">${esc(s.name)}</b><small>${esc(s.desc)}</small><span class="go">ادخل الركن ${icon('arrow')}</span></button>`).join('');
+    grid.addEventListener('click', (e) => {
+      const b = e.target.closest('[data-subject]');
+      if (b) { setSubject(b.dataset.subject); location.href = 'home.html'; }
+    });
+    const out = $('#subjOut');
+    out.textContent = u ? 'تسجيل الخروج' : 'تسجيل الدخول';
+    out.addEventListener('click', () => { if (u) clearUser(); location.href = 'index.html'; });
+  }
+
   const PAGES = {
     login: initLogin, home: renderHome, lectures: renderLectures, assignments: renderAssignments,
-    projects: renderProjects, quizzes: renderQuizzes, ratings: renderRatings, profile: renderProfile,
+    projects: renderProjects, quizzes: renderQuizzes, ratings: renderRatings, profile: renderProfile, subjects: renderSubjects,
   };
 
   document.addEventListener('DOMContentLoaded', () => {
     const page = ($('[data-page]') || {}).dataset?.page;
     if (CONFIG.REQUIRE_LOGIN && page !== 'login' && !getUser()) { location.replace('index.html'); return; }
+    if (page !== 'login' && page !== 'subjects' && !SUBJ) { location.replace('subjects.html'); return; }
     initArt();
     if (page !== 'login' && !storageWorks(LS)) toast('المتصفح بيمنع حفظ البيانات. افتح الموقع من رابط عادي (مش من واتساب أو ملف) عشان بياناتك تتحفظ.');
-    if (page !== 'login') { initShell(); initSearch(); }
+    if (page !== 'login' && page !== 'subjects') { initShell(); initSearch(); }
     PAGES[page]?.();
   });
 })();
